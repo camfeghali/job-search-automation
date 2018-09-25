@@ -13,11 +13,6 @@ import ReportingModule as Report
 import datetime as dt
 import keyboard
 import win32api, win32con
-'''
-lReference: https://stackoverflow.com/questions/37088589/selenium-wont-open-a-new-url-in-a-new-tab-python-chrome
-https://stackoverflow.com/questions/28431765/open-web-in-new-tab-selenium-python
-https://stackoverflow.com/questions/39281806/python-opening-multiple-tabs-using-selenium
-'''
 
 class linkedinApply:
     """Allows user to apply on LinkedIn with easy apply
