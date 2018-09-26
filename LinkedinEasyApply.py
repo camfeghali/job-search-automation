@@ -13,6 +13,11 @@ import ReportingModule as Report
 import datetime as dt
 import keyboard
 import win32api, win32con
+'''
+lReference: https://stackoverflow.com/questions/37088589/selenium-wont-open-a-new-url-in-a-new-tab-python-chrome
+https://stackoverflow.com/questions/28431765/open-web-in-new-tab-selenium-python
+https://stackoverflow.com/questions/39281806/python-opening-multiple-tabs-using-selenium
+'''
 
 class linkedinApply:
     """Allows user to apply on LinkedIn with easy apply
@@ -23,7 +28,7 @@ class linkedinApply:
         driverPath: webdriver path for browser driver (Chrome, phantomjs, firefox, etc...)
 
     """
-    def __init__(self, phone, username, password, driverPath, jobTitle, city, state, resumeLocation, num_loops, follow_company=None):
+    def __init__(self, phone, username, password, driverPath, jobTitle, state, resumeLocation, num_loops, follow_company=None, city=None):
         self.username = username
         self.password = password
         self.driverPath = driverPath
@@ -46,9 +51,14 @@ class linkedinApply:
         """Generates url for LinkedIn job search with location and job title"""
         base = "https://www.linkedin.com/jobs/search/?keywords="
         jobTitle = self.jobTitle.replace(" ","%20")+"&location="
-        city = self.city.replace(" ","%20")+"%2C%20"
         state = self.state.replace(" ","%20")
-        url = base+jobTitle+city+state+"&start=30"
+
+        if self.city:
+            city = self.city.replace(" ","%20")+"%2C%20"
+            url = base+jobTitle+city+state+"&start=30"
+        else:
+            url = base + jobTitle + state + "&start=30"
+
         print(url)
         return url
 
@@ -105,65 +115,68 @@ class linkedinApply:
 
         dicts = []
 
-        for x in range(0, self.num_loops):
+        print(int(self.num_loops))
+        for x in range(0, int(self.num_loops)):
             pane = self.driver.find_element_by_class_name("jobs-search-results")
 
             # start from your target element, here for example, "header"
             all_li = pane.find_elements_by_tag_name("li")
 
-            for x in all_li:
-                all_children_by_xpath = x.find_elements_by_xpath(".//*")
+            try:
+                for x in all_li:
+                    all_children_by_xpath = x.find_elements_by_xpath(".//*")
 
-                try:
-                    #Get link to apply
-                    link = x.find_element_by_class_name("job-card-search__link-wrapper")
-                    tag = link.get_attribute("href")
-
-                    #Obtain Basic Job Info
-                    jobtitle = x.find_element_by_class_name("job-card-search__title").text
-                    location = x.find_element_by_class_name("job-card-search__location").text
-                    location = location.splitlines()[1]
-
-                    company = x.find_element_by_class_name("job-card-search__company-name").text
-
-                    #Set easy apply to true by default
-                    easy_bool = True
-
-                    #If not found then set easy bool to false
                     try:
-                        easyapply = x.find_element_by_class_name("job-card-search__easy-apply")
-                    except:
-                        easy_bool = False
+                        #Get link to apply
+                        link = x.find_element_by_class_name("job-card-search__link-wrapper")
+                        tag = link.get_attribute("href")
 
-                    #If true apply to job
-                    if easy_bool == True:
-                        if tag:
-                            self.apply_to_job(tag)
-                            status = True
+                        #Obtain Basic Job Info
+                        jobtitle = x.find_element_by_class_name("job-card-search__title").text
+                        location = x.find_element_by_class_name("job-card-search__location").text
+                        location = location.splitlines()[1]
+
+                        company = x.find_element_by_class_name("job-card-search__company-name").text
+
+                        #Set easy apply to true by default
+                        easy_bool = True
+
+                        #If not found then set easy bool to false
+                        try:
+                            easyapply = x.find_element_by_class_name("job-card-search__easy-apply")
+                        except:
+                            easy_bool = False
+
+                        #If true apply to job
+                        if easy_bool == True:
+                            if tag:
+                                self.apply_to_job(tag)
+                                status = True
+                            else:
+                                status = False
                         else:
                             status = False
-                    else:
-                        status = False
 
-                    l = []
-                    # generate dictionary for reporting
-                    values = [company, jobtitle, location, easy_bool, status]
-                    for v in values:
-                        l.append(v)
-                    dicts.append(l)
+                        l = []
+                        # generate dictionary for reporting
+                        values = [company, jobtitle, location, easy_bool, status]
+                        for v in values:
+                            l.append(v)
+                        dicts.append(l)
+
+                    except Exception as e:
+                        print(str(e))
+                        pass
+
+                #Here we try to paginate through if possible
+                try:
+                    next_button = WebDriverWait(self.driver, 10).until(
+                        EC.presence_of_element_located((By.CLASS_NAME, 'next')))
+
+                    self.driver.execute_script("arguments[0].click();", next_button)
 
                 except Exception as e:
                     print(str(e))
-                    pass
-
-            #Here we try to paginate through if possible
-            try:
-                next_button = WebDriverWait(self.driver, 10).until(
-                    EC.presence_of_element_located((By.CLASS_NAME, 'next')))
-
-                self.driver.execute_script("arguments[0].click();", next_button)
-
-                time.sleep(15)
 
             except Exception as e:
                 print(str(e))
@@ -178,8 +191,9 @@ class linkedinApply:
             time.sleep(1)
             try:
                 phone_input = WebDriverWait(self.driver, 3).until(EC.presence_of_element_located((By.ID, 'apply-form-phone-input')))
+                phone_input.clear()
                 phone_input.send_keys(self.phone)
-                time.sleep(3)
+                time.sleep(1)
             except Exception as e:
                 print(str(e))
 
@@ -187,7 +201,7 @@ class linkedinApply:
                 resumeBtn = WebDriverWait(self.driver, 3).until(
                     EC.presence_of_element_located((By.ID, 'file-browse-input')))
                 resumeBtn.send_keys(self.resumeLocation)
-                time.sleep(3)
+                time.sleep(1)
             except Exception as e:
                 print(str(e))
 
@@ -199,7 +213,8 @@ class linkedinApply:
                 print(str(e))
 
             print("Successfully applied to job!")
-            time.sleep(10)
+            time.sleep(3)
+
         except:
             print("Primary Form Invalid. Switching to secondary....")
             self.answerForm2()
