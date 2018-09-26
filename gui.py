@@ -21,26 +21,26 @@ class MyFirstGUI:
         self.stringvar2 = TK.StringVar(master)
         self.stringvar3 = TK.StringVar(master)
         self.stringvar4 = TK.StringVar(master)
-        self.stringvar5 = TK.StringVar(master)
         self.stringvar6 = TK.StringVar(master)
         self.stringvar7 = TK.StringVar(master)
         self.stringvar8 = TK.StringVar(master)
         self.stringvar9 = TK.StringVar(master)
+        self.stringvar10 = TK.StringVar(master)
 
         self.var.trace("w", self.validate)
         self.stringvar1.trace("w", self.validate)
         self.stringvar2.trace("w", self.validate)
         self.stringvar3.trace("w", self.validate)
         self.stringvar4.trace("w", self.validate)
-        self.stringvar5.trace("w", self.validate)
         self.stringvar6.trace("w", self.validate)
         self.stringvar7.trace("w", self.validate)
         self.stringvar8.trace("w", self.validate)
         self.stringvar9.trace("w", self.validate)
+        self.stringvar10 = TK.StringVar(master)
 
         self.emailEntry = TK.Entry(Frame, textvariable=self.var)
         self.emailEntry.grid(row=0, column=1, padx=5, pady=5, sticky=TK.N + TK.S + TK.E + TK.W)
-        self.emailEntryLabel = TK.Label(Frame, text="Email:")
+        self.emailEntryLabel = TK.Label(Frame, text="Email Address:")
         self.emailEntryLabel.grid(row=0, column=0, sticky=TK.W)
 
         self.emailPass = TK.Entry(Frame, textvariable=self.stringvar1)
@@ -63,7 +63,7 @@ class MyFirstGUI:
         self.jobTitleLabel = TK.Label(Frame, text="Desired Job Title:")
         self.jobTitleLabel.grid(row=4, column=0, sticky=TK.W)
 
-        self.city = TK.Entry(Frame, textvariable=self.stringvar5)
+        self.city = TK.Entry(Frame)
         self.city.grid(row=6, column=1, padx=5, pady=5, sticky=TK.N + TK.S + TK.E + TK.W)
         self.cityLabel = TK.Label(Frame, text="Location City:")
         self.cityLabel.grid(row=6, column=0, sticky=TK.W)
@@ -78,26 +78,31 @@ class MyFirstGUI:
         self.phoneLabel = TK.Label(Frame, text="Your Phone Number:")
         self.phoneLabel.grid(row=8, column=0, sticky=TK.W)
 
+        self.num_loops_label = TK.Label(Frame, text="Page Limit:")
+        self.num_loops_label.grid(row=9, column=0, sticky=TK.W)
+        self.num_loops = TK.Entry(Frame, textvariable=self.stringvar10)
+        self.num_loops.grid(row=9, column=1,  sticky=TK.N + TK.S + TK.E + TK.W, padx=5, pady=5)
+
         self.resume_path = TK.Entry(Frame, textvariable=self.stringvar8)
-        self.resume_path.grid(row=9, column=1, padx=5, pady=5, sticky=TK.N + TK.S + TK.E + TK.W)
+        self.resume_path.grid(row=10, column=1, padx=5, pady=5, sticky=TK.N + TK.S + TK.E + TK.W)
         self.resume_path_label = TK.Label(Frame, text="Resume Path:")
-        self.resume_path_label.grid(row=9, column=0, sticky=TK.W)
+        self.resume_path_label.grid(row=10, column=0, sticky=TK.W)
         self.resume_path.configure(state="readonly")
 
         self.resumeBtn = HoverButton(Frame, text='Browse Resume', activebackground='lightgrey', command=self.askopenfileResume)
-        self.resumeBtn.grid(row=9, column=2,  sticky=TK.N + TK.S + TK.E + TK.W, padx=5, pady=5)
+        self.resumeBtn.grid(row=10, column=2,  sticky=TK.N + TK.S + TK.E + TK.W, padx=5, pady=5)
 
         self.driver_path = TK.Entry(Frame, textvariable=self.stringvar9)
-        self.driver_path.grid(row=10, column=1, padx=5, pady=5, sticky=TK.N + TK.S + TK.E + TK.W)
+        self.driver_path.grid(row=11, column=1, padx=5, pady=5, sticky=TK.N + TK.S + TK.E + TK.W)
         self.driver_path_label = TK.Label(Frame, text="Driver Path:")
-        self.driver_path_label.grid(row=10, column=0, sticky=TK.W)
+        self.driver_path_label.grid(row=11, column=0, sticky=TK.W)
         self.driver_path.configure(state="readonly")
 
         self.driver_btn = HoverButton(Frame, text='Browse Drivers', activebackground='lightgrey', command=self.askopenfileDriver)
-        self.driver_btn.grid(row=10, column=2,  sticky=TK.N + TK.S + TK.E + TK.W, padx=5, pady=5)
+        self.driver_btn.grid(row=11, column=2,  sticky=TK.N + TK.S + TK.E + TK.W, padx=5, pady=5)
 
         self.submit_button = HoverButton(Frame, text="Submit", activebackground='lightgrey', command=self.apply)
-        self.submit_button.grid(row=11, column=0, columnspan=2,  sticky=TK.N + TK.S + TK.E + TK.W, padx=5, pady=5)
+        self.submit_button.grid(row=12, column=0, columnspan=2,  sticky=TK.N + TK.S + TK.E + TK.W, padx=5, pady=5)
 
     def askopenfileResume(self):
         f = filedialog.askopenfile(mode='r')
@@ -125,20 +130,19 @@ class MyFirstGUI:
         c = self.stringvar2.get()
         d = self.stringvar3.get()
         e = self.stringvar4.get()
-        f = self.stringvar5.get()
         g = self.stringvar6.get()
         h = self.stringvar7.get()
         i = self.stringvar8.get()
         j = self.stringvar9.get()
 
-        if a and b and c and d and e and f and g and h and i and j:
+        if a and b and c and d and e and g and h and i and j:
             self.submit_button.config(state='normal')
         else:
             self.submit_button.config(state='disabled')
 
     def apply(self):
         c = LinkedinEasyApply.linkedinApply(phone=self.phone.get(), username=self.linkedInUserNameEntry.get(), password=self.linkedInPass.get(), driverPath=self.driver_path.get(), jobTitle=self.jobTitle.get(),
-                                            city=self.city.get(), state=self.state.get(), resumeLocation=self.resume_path.get(), num_loops=10)
+                                            city=self.city.get(), state=self.state.get(), resumeLocation=self.resume_path.get(), num_loops=self.num_loops.get())
 
         c.init_driver()
         time.sleep(3)
