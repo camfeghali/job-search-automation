@@ -141,8 +141,11 @@ class MyFirstGUI:
             self.submit_button.config(state='disabled')
 
     def apply(self):
-        c = LinkedinEasyApply.linkedinApply(phone=self.phone.get(), username=self.linkedInUserNameEntry.get(), password=self.linkedInPass.get(), driverPath=self.driver_path.get(), jobTitle=self.jobTitle.get(),
-                                            city=self.city.get(), state=self.state.get(), resumeLocation=self.resume_path.get(), num_loops=self.num_loops.get())
+        # c = LinkedinEasyApply.linkedinApply(phone=self.phone.get(), username=self.linkedInUserNameEntry.get(), password=self.linkedInPass.get(), driverPath=self.driver_path.get(), jobTitle=self.jobTitle.get(),
+        #                                     city=self.city.get(), state=self.state.get(), resumeLocation=self.resume_path.get(), num_loops=self.num_loops.get())
+
+        c = LinkedinEasyApply.linkedinApply(phone="3472600617", username="camfeg@gmail.com", password="Makhassik@01", driverPath="/Users/camillefeghali/dev/frontend-master/automation/LinkedIn-Automatic-Job-Applier/chromedriver", jobTitle="Software Engineer",
+                                            city="New York", state="New York", resumeLocation="/Users/camillefeghali/Desktop/Job-search/Camille\ Feghali\ resume.pdf", num_loops="10")
 
         c.init_driver()
         time.sleep(3)

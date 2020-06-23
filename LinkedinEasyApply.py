@@ -79,16 +79,12 @@ class linkedinApply:
 
     def login(self):
         """Logs into LinkedIn.com"""
-        self.driver.get("https://www.linkedin.com/")
+        self.driver.get("https://www.linkedin.com/login?fromSignIn=true&trk=guest_homepage-basic_nav-header-signin")
         try:
-            user_field = WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.ID, 'session_key')))
 
-            pw_field = WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.ID, 'session_password')))
-
-            login_button = WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.CLASS_NAME, 'sign-in-form__submit-button')))
+            user_field = self.driver.find_element_by_id("username")
+            pw_field = self.driver.find_element_by_id("password")
+            login_button = self.driver.find_element_by_xpath("//button[contains(text(), 'Sign in')]")
 
             user_field.send_keys(self.username)
             user_field.send_keys(Keys.TAB)
@@ -105,35 +101,23 @@ class linkedinApply:
         self.driver.get(url)
         time.sleep(5)
 
-        #Click classic view button
-        classic_view_btn = self.driver.find_elements_by_class_name('jobs-search-dropdown__trigger')
-        classic_view_btn[1].click()
-        time.sleep(1)
-
-        sub_classic_btn = WebDriverWait(self.driver, 10).until(
-            EC.presence_of_element_located((By.CLASS_NAME, 'jobs-search-dropdown__option-button--single')))
-
-        sub_classic_btn.click()
-        time.sleep(1)
-
         dicts = []
 
         print(int(self.num_loops))
         for x in range(0, int(self.num_loops)):
-            pane = self.driver.find_element_by_class_name("jobs-search-results")
+            pane = self.driver.find_element_by_class_name("jobs-search-two-pane__results")
 
             # start from your target element, here for example, "header"
             all_li = pane.find_elements_by_tag_name("li")
 
+            
             try:
                 for x in all_li:
                     all_children_by_xpath = x.find_elements_by_xpath(".//*")
-
                     try:
                         #Get link to apply
                         link = x.find_element_by_class_name("job-card-search__link-wrapper")
                         tag = link.get_attribute("href")
-
                         #Obtain Basic Job Info
                         jobtitle = x.find_element_by_class_name("job-card-search__title").text
                         location = x.find_element_by_class_name("job-card-search__location").text
