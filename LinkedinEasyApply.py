@@ -11,8 +11,9 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver import ActionChains
 import ReportingModule as Report
 import datetime as dt
+import pdb
 import keyboard
-import win32api, win32con
+
 '''
 lReference: https://stackoverflow.com/questions/37088589/selenium-wont-open-a-new-url-in-a-new-tab-python-chrome
 https://stackoverflow.com/questions/28431765/open-web-in-new-tab-selenium-python
@@ -64,9 +65,11 @@ class linkedinApply:
 
     def click(self, x,y):
         """Mouse event click for webdriver"""
-        win32api.SetCursorPos((x,y))
-        win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN,x,y,0,0)
-        win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP,x,y,0,0)
+
+        # win32api.SetCursorPos((x,y))
+        action.MoveByOffset(x,y).Perform()
+        # win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN,x,y,0,0)
+        # win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP,x,y,0,0)
 
     def init_driver(self):
         """Initializes instance of webdriver"""
@@ -79,13 +82,13 @@ class linkedinApply:
         self.driver.get("https://www.linkedin.com/")
         try:
             user_field = WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.CLASS_NAME, 'login-email')))
+                EC.presence_of_element_located((By.ID, 'session_key')))
 
             pw_field = WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.CLASS_NAME, 'login-password')))
+                EC.presence_of_element_located((By.ID, 'session_password')))
 
             login_button = WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.ID, 'login-submit')))
+                EC.presence_of_element_located((By.CLASS_NAME, 'sign-in-form__submit-button')))
 
             user_field.send_keys(self.username)
             user_field.send_keys(Keys.TAB)
