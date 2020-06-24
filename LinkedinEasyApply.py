@@ -185,16 +185,6 @@ class linkedinApply:
         try:
             #Here we need to account for different application windows
             time.sleep(1)
-
-            try:
-                # next_button = WebDriverWait(self.driver, 3).until(EC.presence_of_element_located((By.CLASS_NAME, 'artdeco-button__text')))
-                next_button = self.driver.find_elements_by_class_name("artdeco-button__text")[3].text
-                next_button.click()
-
-                time.sleep(1)
-            except Exception as e:
-                print(str(e))
-
             try:
                 phone_input = WebDriverWait(self.driver, 3).until(EC.presence_of_element_located((By.ID, 'apply-form-phone-input')))
                 phone_input.clear()
@@ -226,6 +216,7 @@ class linkedinApply:
             self.answerForm2()
 
     def answerForm2(self):
+        pdb.set_trace()
         try:
             try:
                 text_fields = self.driver.find_elements_by_class_name("ember-text-field")
@@ -264,6 +255,7 @@ class linkedinApply:
             self.answerForm3()
 
     def answerForm3(self):
+        pdb.set_trace()
         try:
             try:
                 form_submit_btn = WebDriverWait(self.driver, 10).until(
@@ -297,6 +289,7 @@ class linkedinApply:
 
         #Look for easy apply button
         try:
+            pdb.set_trace()
             easyApplyBtn = WebDriverWait(self.driver, 20).until(
                 EC.presence_of_element_located((By.CLASS_NAME, 'jobs-apply-button')))
             easyApplyBtn.click()
