@@ -110,30 +110,35 @@ class linkedinApply:
             # start from your target element, here for example, "header"
             all_li = pane.find_elements_by_tag_name("li")
 
-            
             try:
                 for x in all_li:
                     all_children_by_xpath = x.find_elements_by_xpath(".//*")
                     try:
                         #Get link to apply
-                        link = x.find_element_by_class_name("job-card-search__link-wrapper")
-                        tag = link.get_attribute("href")
-                        #Obtain Basic Job Info
-                        jobtitle = x.find_element_by_class_name("job-card-search__title").text
-                        location = x.find_element_by_class_name("job-card-search__location").text
-                        location = location.splitlines()[1]
+                        
+                        print(self.driver.execute_script('var items = {}; for (index = 0; index < arguments[0].attributes.length; ++index) { items[arguments[0].attributes[index].name] = arguments[0].attributes[index].value }; return items;', x))
 
-                        company = x.find_element_by_class_name("job-card-search__company-name").text
+
+                        link = x.find_element_by_class_name("job-card-list__title")
+                        
+                        tag = link.get_attribute("href")
+
+                        #Obtain Basic Job Info
+                        jobtitle = x.find_element_by_class_name("job-card-list__title").text
+
+                        location = x.find_element_by_class_name("artdeco-entity-lockup__caption").text
+
+                        company = x.find_element_by_class_name("job-card-container__company-name").text
 
                         #Set easy apply to true by default
                         easy_bool = True
 
                         #If not found then set easy bool to false
                         try:
-                            easyapply = x.find_element_by_class_name("job-card-search__easy-apply")
+                            easyapply = x.find_element_by_class_name("inline-flex").text
                         except:
                             easy_bool = False
-
+                    
                         #If true apply to job
                         if easy_bool == True:
                             if tag:
@@ -147,12 +152,15 @@ class linkedinApply:
                         l = []
                         # generate dictionary for reporting
                         values = [company, jobtitle, location, easy_bool, status]
+
+
                         for v in values:
                             l.append(v)
                         dicts.append(l)
 
                     except Exception as e:
-                        print(str(e))
+                        # print(str(e))
+                        print("link not found")
                         pass
 
                 #Here we try to paginate through if possible
@@ -173,9 +181,20 @@ class linkedinApply:
         return dicts
 
     def answerForm1(self):
+        pdb.set_trace()
         try:
             #Here we need to account for different application windows
             time.sleep(1)
+
+            try:
+                # next_button = WebDriverWait(self.driver, 3).until(EC.presence_of_element_located((By.CLASS_NAME, 'artdeco-button__text')))
+                next_button = self.driver.find_elements_by_class_name("artdeco-button__text")[3].text
+                next_button.click()
+
+                time.sleep(1)
+            except Exception as e:
+                print(str(e))
+
             try:
                 phone_input = WebDriverWait(self.driver, 3).until(EC.presence_of_element_located((By.ID, 'apply-form-phone-input')))
                 phone_input.clear()
@@ -194,7 +213,7 @@ class linkedinApply:
 
             try:
                 form_submit_btn = WebDriverWait(self.driver, 3).until(
-                    EC.presence_of_element_located((By.CLASS_NAME, 'jobs-apply-form__submit-button')))
+                    EC.presence_of_element_located((By.CLASS_NAME, 'js-message-apply-submit')))
                 form_submit_btn.click()
             except Exception as e:
                 print(str(e))
@@ -262,11 +281,15 @@ class linkedinApply:
 
     def apply_to_job(self, url):
         #Get main window
+
         current_window = self.driver.current_window_handle
+
         self.driver.execute_script('window.open(arguments[0]);', url)
 
         #Go to app window
+
         new_window = [window for window in self.driver.window_handles if window != current_window][0]
+
         self.driver.switch_to.window(new_window)
 
         #Set init status
@@ -275,7 +298,7 @@ class linkedinApply:
         #Look for easy apply button
         try:
             easyApplyBtn = WebDriverWait(self.driver, 20).until(
-                EC.presence_of_element_located((By.CLASS_NAME, 'jobs-s-apply__button')))
+                EC.presence_of_element_located((By.CLASS_NAME, 'jobs-apply-button')))
             easyApplyBtn.click()
 
             try:
